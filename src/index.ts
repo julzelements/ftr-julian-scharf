@@ -1,7 +1,5 @@
-export const add = (a: number, b: number) => a + b;
+import { App } from "./App";
 
-export class App {
-  constructor() {
-    console.log("Hello world!");
-  }
-}
+const app = new App();
+
+app.start();
