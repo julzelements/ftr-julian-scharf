@@ -8,12 +8,27 @@ A state machine of the runtime is here:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Printing: input X
-    Printing --> Paused: halt
-    Paused --> Printing: resume
-    Paused --> Paused: input
-    Printing --> Printing: input
-    Printing --> [*]: halt
+    [*] --> Initial: ts-node ./index.js
+    Initial --> Running: process\ntimer\ninterval
+    Running --> Running: process\nnumber
+    Running --> Running: display\nnumbers
+    Running --> Paused: "halt"
+    Paused --> Running: "resume"
+    Running --> Terminated: "quit"
+    Terminated --> [*]: press any key to exit
+```
+
+```mermaid
+graph TD
+    A[Start] -->|ts-node ./index.js| B[Initial]
+    B -->|input number\n clock started| C[Running]
+    C -->|halt\nclock destroyed| D[Paused]
+    D -->|resume\nclock started| C
+    C -->|quit| E[Terminated]
+    E -->|press any key to exit| F[End]
+    G{User} -->|handle\ninital\ninput| B
+    G{User} -->|input| C
+    G{User} -->|input| D
 ```
 
 ### Global datum

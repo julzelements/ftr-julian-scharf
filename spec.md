@@ -64,13 +64,13 @@ Part 2: Changes to your application
 
    #### Websockets with a separate frontend and backend.
 
-   - The backend handles the clock logic and the computations.
-   - The clock fires events across the websocket connection to the frontend.
+   - The backend handles the timer logic and the computations.
+   - The timer fires events across the websocket connection to the frontend.
    - Event Listeners on the frontend will update the display.
    - User events like START STOP PAUSE enter number, will be sent in the same manner to the backend.
    - Event listeners on the backend will handle the user input.
      PROS:
-   - Distribution. You can potentially have multiple front ends connected to the one clock. (If that is a requirement).
+   - Distribution. You can potentially have multiple front ends connected to the one timer. (If that is a requirement).
    - Separation of concerns. Its obvious where the user handling should go and where the calculation logic should go. It's not quite MVC. It's more Model and View with bits of the controller in both view and model.
    - Probably less work to create this model. Less rewriting and chanding of the existing app.
      CONS:
@@ -90,7 +90,7 @@ Part 2: Changes to your application
 
    #### Over engineered Solution with UDP and TCP
 
-   If you wanted, you could keep the majority of the app running in a node server process. All the clock ticks could be sent via UDP in a broadcast type situation. If a clock tick is dropped, then this could be seen as an acceptable compromise for lower latency.
+   If you wanted, you could keep the majority of the app running in a node server process. All the timer ticks could be sent via UDP in a broadcast type situation. If a timer tick is dropped, then this could be seen as an acceptable compromise for lower latency.
    You can categorise the user input as more important. A PAUSE command needs to be acknowledged and handled, it can't be silently dropped. Thus all the user commands and the user data supplied would be sent via websockets on TCP, slower, but more reliable.
    PROS:
 
@@ -110,13 +110,13 @@ I did some research, we have a few options to handle updates from the backend an
 
 #### Websockets with a separate frontend and backend.
 
-- The backend handles the clock logic and the computations.
-- The clock fires events across the websocket connection to the frontend.
+- The backend handles the timer logic and the computations.
+- The timer fires events across the websocket connection to the frontend.
 - Event Listeners on the frontend will update the display.
 - User events like START STOP PAUSE enter number, will be sent in the same manner to the backend.
 - Event listeners on the backend will handle the user input.
   PROS:
-- Distribution. You can potentially have multiple front ends connected to the one clock. (If that is a requirement).
+- Distribution. You can potentially have multiple front ends connected to the one timer. (If that is a requirement).
 - Separation of concerns. Its obvious where the user handling should go and where the calculation logic should go. It's not quite MVC. It's more Model and View with bits of the controller in both view and model.
 - Probably less work to create this model. Less rewriting and chanding of the existing app.
   CONS:
@@ -136,7 +136,7 @@ PROS:
 
 #### Over engineered Solution with UDP and TCP
 
-If you wanted, you could keep the majority of the app running in a node server process. All the clock ticks could be sent via UDP in a broadcast type situation. If a clock tick is dropped, then this could be seen as an acceptable compromise for lower latency.
+If you wanted, you could keep the majority of the app running in a node server process. All the timer ticks could be sent via UDP in a broadcast type situation. If a timer tick is dropped, then this could be seen as an acceptable compromise for lower latency.
 You can categorise the user input as more important. A PAUSE command needs to be acknowledged and handled, it can't be silently dropped. Thus all the user commands and the user data supplied would be sent via websockets on TCP, slower, but more reliable.
 PROS:
 
@@ -153,7 +153,7 @@ Lets go with option 1. We will deploy the websockets solution cause it seems lik
 
 ### Redesign
 
-To support multiple users, you need to make sure a new App is initalised from a new client session. A super simple solution: The client can generate a uuid and prefix each event. When each app is initialised, it is setup with event listeners that only respond to that particular uuid prefix.
+To support multiple users, you need to make sure a new App is initalised from a new client session. A super simple solution: The client can generate a uuid and prefix each event. When each app is initialised, it is setup with event listeners that only respond to that particular uuid prefix. We would also want to create a new timer every time we get a new 'start' event.
 
 ### Hosting
 
@@ -166,12 +166,12 @@ Add a SSL Certificate and HTTPS.
 
 Use github actions to deploy to the dev environment every time we merge a PR to the main branch.
 Setup manual github actions to promote the build to staging and production.
-I'm not sure how you would update the backend without resetting all the users sessions. But I know it can be done, just outside the scope of this exercise. You might want to have an load balancer send all the new sessions to the new version of the backend. And then when the active sessions drop below a certain level, you kill the old backend? It really depends on how mission critical it is to support long running clocks.
+I'm not sure how you would update the backend without resetting all the users sessions. But I know it can be done, just outside the scope of this exercise. You might want to have an load balancer send all the new sessions to the new version of the backend. And then when the active sessions drop below a certain level, you kill the old backend? It really depends on how mission critical it is to support long running timers.
 
 ### Testing
 
 The repo should have a linting step and a typescript building step. All the unit tests should run in github actions.
-There should be a small amount of e2e (playwright or cypress) tests that run on dev and staging. Just the critical flow of starting the app and seeing the clock update a few times should be fine. It would probably be a good idea to add a few test hook elements to the page if it makes this testing more robust. You really don't want to be doing complex element queries when trying to find something in real time.
+There should be a small amount of e2e (playwright or cypress) tests that run on dev and staging. Just the critical flow of starting the app and seeing the timer update a few times should be fine. It would probably be a good idea to add a few test hook elements to the page if it makes this testing more robust. You really don't want to be doing complex element queries when trying to find something in real time.
 
 ### Monitoring
 

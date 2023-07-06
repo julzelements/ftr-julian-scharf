@@ -1,10 +1,10 @@
-# Clock Component
+# Timer Component
 
 Handles time management. Publishes a logEvent every time the tick occurs. Interval is hardcoded upon initialisation.
 
 Will not be adding queue redundancy. Only one event at a time.
 
-Pause method will require some thought. If the pause is supposed to start midway between two ticks. Then there may need to be another property to hold that 'short tick'. Consider edge cases and clearing out events when the clock pauses.
+Pause method will require some thought. If the pause is supposed to start midway between two ticks. Then there may need to be another property to hold that 'short tick'. Consider edge cases and clearing out events when the timer pauses.
 
 ### Methods:
 
@@ -37,9 +37,9 @@ Handles user input supplied as a string.
 
 # Store
 
-Simple component to keep the numbers array in a separate place. Without this, we would need the Clock to reach into the Input, or the Input to write to the clock.
+Simple component to keep the numbers array in a separate place. Without this, we would need the Timer to reach into the Input, or the Input to write to the timer.
 The Input will write the numbers to the number store.
-The Clock will read the numbers from the number store.
+The Timer will read the numbers from the number store.
 
 ### Methods
 
