@@ -47,6 +47,10 @@ quit
 >> Thanks for playing, press any key to exit.
 ```
 
+### Scope assumptions
+
+**User CANNOT enter additional numbers whilst timer is paused.**
+
 Part 2: Changes to your application
 
 1. You have a new requirement to implement for your application: its logic should stay
