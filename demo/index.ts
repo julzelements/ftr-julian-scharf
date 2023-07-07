@@ -58,7 +58,14 @@ const isValidTimeInterval = (input: string): boolean => {
 const reduceInitial: Reducer = (action: Action, state: State): State => {
   if (isInputTimerInterval(action)) {
     if (isValidTimeInterval(action.input)) {
-      return <Running>{ ...state, tag: "Running", store: new Map() };
+      return <Running>{
+        ...state,
+        tag: "Running",
+        store: new Map(),
+        timeout: setTimeout(() => {
+          console.log(state.store.keys);
+        }, parseInt(action.input, 10)),
+      };
     }
     return <Initial>{ ...state, prompt: "Please enter a number between 1 and 10" };
   }
@@ -111,6 +118,10 @@ const reduce: Reducer = (action: Action, state: State): State => {
   return state;
 };
 
+process.stdin.setRawMode(true);
+process.stdin.resume();
+process.stdin.setEncoding("utf8");
+
 const readline = createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -123,42 +134,51 @@ let state: State = { tag: "Initial", store: new Map(), prompt: "Enter a number b
 readline.setPrompt(state.prompt);
 readline.prompt();
 readline.on("line", (input: string) => {
-  reduce({ tag: "InputTimerInterval", input }, state);
-  readline.setPrompt(state.prompt);
+  const parsedInput = parseInt(input, 10);
+
+  // the simplest thing that could possibly work
+  let action: Action;
+  if (isInitial(state)) {
+    action = { tag: "InputTimerInterval", input }; // should we pass in parsedInt here?
+  } else if (isRunning(state) && !isNaN(parsedInput)) {
+    action = { tag: "InputNumber", input };
+  } else if (input === "halt") {
+    action = { tag: "Halt" };
+  } else if (input === "resume") {
+    action = { tag: "Resume" };
+  } else if (input === "quit") {
+    action = { tag: "Quit" };
+  } else {
+    console.log("invalid input");
+    readline.prompt();
+    return;
+  }
+
+  state = reduce(action, state);
+
+  // handle state change
+  switch (state.tag) {
+    case "Initial":
+      readline.setPrompt(state.prompt); // TODO: fix mutation here
+      break;
+    case "Paused":
+      console.log("timer halted");
+      // TODO: pause timer
+      break;
+    case "Running":
+      console.log("timer started");
+      // TODO: start timer
+      break;
+    case "Terminated":
+      // To implement this, I need to add a listener to keydown. Currently my whole app only listens to \n
+      // TODO: stop timer
+      console.log("Thanks for playing, press any key to exit.");
+      readline.close();
+      return;
+  }
+
   readline.prompt();
+
+  console.log(state.tag);
+  console.log(state.store);
 });
-
-// we need a recursive algo
-// sets the prompt according to state
-// readline.setPrompt(state.prompt);
-// readline.prompt();
-// readline.on("line", (input: string) => {
-// how do we know what action it is?
-//   reduce({ tag: "InputTimerInterval", input }, state);
-
-// readline.setPrompt("Enter a number from 1000 to 5000");
-// readline.prompt();
-// readline.on("line", (input: string) => {
-//   if (input === "start") {
-//     myTimer();
-//     state = "Running";
-//     readline.setPrompt("App is running");
-//     readline.prompt();
-//     return;
-//   }
-//   if (!isNaN(parseInt(input, 10))) {
-//     store.interval = parseInt(input, 10);
-//     state = "waitingForName";
-//     readline.setPrompt("Whats your name");
-//     readline.prompt();
-//   }
-//   if (input === "halt") {
-//     clearTimeout(store.timeout);
-//     console.log("timer stopped");
-//     state = "Stopped";
-//   }
-//   if (state === "waitingForName" || state === "Running") {
-//     store.name = input;
-//     state = "Running";
-//   }
-// });
