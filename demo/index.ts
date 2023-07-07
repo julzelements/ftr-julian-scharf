@@ -1,4 +1,5 @@
 import { createInterface } from "readline";
+import { getNewNumberMap } from "./helpers";
 
 export type Store = Map<number, number>;
 
@@ -74,11 +75,9 @@ const reduceInitial: Reducer = (action: Action, state: State): State => {
 
 const reduceRunning: Reducer = (action: Action, state: State): State => {
   if (isInputNumber(action)) {
-    // i need to keep track of the number of times the user has entered a number
-    // I don't know if this works yet
     return <Running>{
       ...state,
-      store: state.store.set(parseInt(action.input, 10), (state.store.get(parseInt(action.input, 10)) || 0) + 1),
+      store: getNewNumberMap(state.store, parseInt(action.input, 10)),
     };
   }
   if (isHalt(action)) {
@@ -118,18 +117,12 @@ const reduce: Reducer = (action: Action, state: State): State => {
   return state;
 };
 
-process.stdin.setRawMode(true);
-process.stdin.resume();
-process.stdin.setEncoding("utf8");
-
 const readline = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
 let state: State = { tag: "Initial", store: new Map(), prompt: "Enter a number between 1 and 10" };
-
-// where do I put the logic that checks whether a user has entered 'start' or thier name?
 
 readline.setPrompt(state.prompt);
 readline.prompt();
@@ -178,7 +171,4 @@ readline.on("line", (input: string) => {
   }
 
   readline.prompt();
-
-  console.log(state.tag);
-  console.log(state.store);
 });
