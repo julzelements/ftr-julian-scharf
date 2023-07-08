@@ -64,9 +64,7 @@ function isInvalidInput(x: Action): x is InvalidInput {
 
 export type Reducer = (action: Action, state: State) => State;
 
-// need a number between 1 and 10 inclusive
-
-const reduceInitial: Reducer = (action: Action, state: State): State => {
+const reduceInitial = (action: Action, state: Initial): State => {
   if (isInputTimerInterval(action)) {
     return <Running>{
       ...state,
@@ -79,11 +77,12 @@ const reduceInitial: Reducer = (action: Action, state: State): State => {
   return <Initial>{ ...state, prompt: "Please enter a number between 1 and 10" };
 };
 
-const reduceRunning: Reducer = (action: Action, state: State): State => {
+const reduceRunning = (action: Action, state: Running): State => {
   if (isInputNumber(action)) {
     return <Running>{
       ...state,
       store: getNewNumberMap(state.store, action.integer),
+      prompt: `Please enter the ${state.store.size === 0 ? "first" : "next"} number`,
     };
   }
   if (isHalt(action)) {
@@ -111,7 +110,7 @@ const reducePaused = (action: Action, state: Paused): State => {
   return state;
 };
 
-const reduceTerminated = (action: Action, state: State): State => {
+const reduceTerminated = (state: Terminated): State => {
   return state;
 };
 
@@ -153,7 +152,7 @@ const handleIO = (state: State, input: string): Action => {
   if (isInitial(state)) {
     // TODO: make sensible user validation for inital time interval
     return integer ? { tag: "InputTimerInterval", integer } : { tag: "InvalidInput", input };
-  } else if (isRunning(state) || isRunning(state)) {
+  } else if (isRunning(state) || isPaused(state)) {
     return integer ? { tag: "InputNumber", integer } : handleCommand(input);
   } else {
     return { tag: "NoOp" };
