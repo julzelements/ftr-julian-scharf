@@ -3,6 +3,9 @@ stateDiagram-v2
 direction LR
     [*] --> Initial: npm start
     Initial --> Running: input\ntimer interval
+    Initial --> Initial: 💥 err
+    Running --> Running: 💥 err
+    Paused --> Paused: 💥 err
     Running --> Running: input\nnumber
     Running --> Paused: halt
     Paused --> Running: resume

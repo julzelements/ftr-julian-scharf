@@ -11,7 +11,7 @@ describe("displayNumbers", () => {
 });
 
 describe("getNewNumberMap", () => {
-  it("correctly gets a new number map", () => {
+  it("gets a new numberMap with incremented number count", () => {
     const numberMap = new Map();
     numberMap.set(1, 1);
     numberMap.set(2, 2);
