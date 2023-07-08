@@ -110,8 +110,8 @@ const reducePaused = (action: Action, state: Paused): State => {
   return state;
 };
 
-const reduceTerminated = (state: Terminated): State => {
-  return state;
+const reduceTerminated = (): State => {
+  process.exit();
 };
 
 const transition: Reducer = (action: Action, state: State): State => {
@@ -125,7 +125,7 @@ const transition: Reducer = (action: Action, state: State): State => {
     return reducePaused(action, state);
   }
   if (isTerminated(state)) {
-    return reduceTerminated(action, state);
+    return reduceTerminated();
   }
   return state;
 };
@@ -173,6 +173,7 @@ const main = () => {
     const action = handleIO(state, input);
     state = transition(action, state);
     console.log(state.tag);
+    console.log(state.store);
     readline.setPrompt(state.prompt);
     readline.prompt();
   });
