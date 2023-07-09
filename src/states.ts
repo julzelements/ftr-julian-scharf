@@ -12,6 +12,7 @@ export type Running = TaggedState<"Running"> & {
   timerId: NodeJS.Timeout;
   interval: number;
   prompt: string;
+  startDate: number;
 };
 export type Paused = TaggedState<"Paused"> & {
   store: Store;
@@ -19,6 +20,7 @@ export type Paused = TaggedState<"Paused"> & {
   timerId: NodeJS.Timeout;
   interval: number;
   prompt: string;
+  startDate: number;
 };
 export type Terminated = TaggedState<"Terminated"> & { store: Store; prompt: string };
 export type State = Initial | Running | Paused | Terminated;

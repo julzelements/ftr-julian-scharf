@@ -8,7 +8,9 @@ export type Reducer = (action: Action, state: State) => State;
 const reduceInitial = (action: Action, state: Initial): State => {
   if (isInputTimerInterval(action)) {
     // TODO: get rid of all the console logs and only use readline
-    const timerId = startTimer(action.integer, () => console.log(displayNumbers(state.getGlobalProp("store"))));
+    const timerId = startTimer(action.integer, Date.now(), () =>
+      console.log(displayNumbers(state.getGlobalProp("store")))
+    );
     return <Running>{
       ...state,
       interval: action.integer,
@@ -44,7 +46,9 @@ const reduceRunning = (action: Action, state: Running): State => {
 
 const reducePaused = (action: Action, state: Paused): State => {
   if (isResume(action)) {
-    const timerId = startTimer(state.interval, () => console.log(displayNumbers(state.getGlobalProp("store"))));
+    const timerId = startTimer(state.interval, state.startDate, () =>
+      console.log(displayNumbers(state.getGlobalProp("store")))
+    );
     return <Running>{
       ...state,
       tag: "Running",

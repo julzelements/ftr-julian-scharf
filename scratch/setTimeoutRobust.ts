@@ -1,40 +1,16 @@
-import { createInterface } from "readline";
-let feelings = "";
-
-const readline = createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-const readLineAsync = (msg: string) => {
-  return new Promise((resolve) => {
-    readline.question(msg, (userRes) => {
-      resolve(userRes);
-    });
-  });
-};
-
-const startApp = async () => {
-  const userRes = await readLineAsync("How are you? ");
-  feelings = userRes as unknown as string;
-  readline.close();
-  console.log("Your response was: " + userRes + " — Thanks!");
-};
-
-let i = 0;
 const start = Date.now();
 
-const myTimer = () => {
-  const goal = i * 1000 + start;
-  const drift = Date.now() - goal;
-  i++;
+const myTimer = (interval: number) => {
+  const elapsed = Date.now() - start;
+  const goal = elapsed / interval;
+  const drift = elapsed - goal * 1000;
+
   setTimeout(() => {
-    console.log({ tick: i, drift, feelings });
-    myTimer();
+    const expectedNow = (goal + interval) * 1000;
+    const actualNow = Date.now();
+    console.log({ tick: goal, drift, expectedNow, actualNow });
+    myTimer(interval);
   }, 1000 - drift);
 };
 
-myTimer();
-startApp();
-
-export {};
+myTimer(1);

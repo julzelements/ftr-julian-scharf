@@ -41,17 +41,17 @@ describe("app e2e test", () => {
 
     readline.emit("line", "909");
     expect(setPromptSpy).toHaveBeenNthCalledWith(3, "Please enter the next number");
-    jest.runOnlyPendingTimers();
+    jest.advanceTimersByTime(5000);
     expect(consoleLogSpy).toHaveBeenCalledWith("909:1");
 
     readline.emit("line", "808");
     expect(setPromptSpy).toHaveBeenNthCalledWith(4, "Please enter the next number");
-    jest.runOnlyPendingTimers();
+    jest.advanceTimersByTime(5000);
     expect(consoleLogSpy).toHaveBeenCalledWith("909:1, 808:1");
 
     readline.emit("line", "909");
     expect(setPromptSpy).toHaveBeenNthCalledWith(5, "Please enter the next number");
-    jest.runOnlyPendingTimers();
+    jest.advanceTimersByTime(5000);
     expect(consoleLogSpy).toHaveBeenCalledWith("909:2, 808:1");
 
     readline.emit("line", "banana");
@@ -59,17 +59,14 @@ describe("app e2e test", () => {
     expect(setPromptSpy).toHaveBeenNthCalledWith(6, "Please enter the next number");
 
     readline.emit("line", "halt");
-    jest.runOnlyPendingTimers();
     expect(stopTimerSpy).toHaveBeenCalledTimes(1);
     expect(setPromptSpy).toHaveBeenNthCalledWith(7, "Timer paused");
 
     readline.emit("line", "resume");
-    jest.runOnlyPendingTimers();
     expect(startTimerSpy).toHaveBeenCalledTimes(2);
     expect(setPromptSpy).toHaveBeenNthCalledWith(8, "Timer resumed");
 
     readline.emit("line", "quit");
-    jest.runOnlyPendingTimers();
     expect(setPromptSpy).toHaveBeenNthCalledWith(9, "Thanks for playing, press any key to exit.");
 
     expect(startTimerSpy).toHaveBeenCalledTimes(2);
