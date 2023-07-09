@@ -1,3 +1,9 @@
 import { app } from "./app";
+import { createInterface } from "readline";
 
-app();
+const readline = createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+app(readline);

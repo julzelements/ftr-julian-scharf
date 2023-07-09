@@ -1,4 +1,4 @@
-import { createInterface } from "readline";
+import { Interface } from "readline";
 import { displayNumbers, getNewNumberMap } from "./helpers";
 
 export type Store = Map<number, number>;
@@ -171,12 +171,7 @@ const handleIO = (state: State, input: string): Action => {
   }
 };
 
-export const app = () => {
-  const readline = createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
+export const app = (readline: Interface) => {
   let state: State = <Initial>{ tag: "Initial", store: new Map(), prompt: "Enter a number between 1 and 10" };
   state.getGlobalProp = (prop) => state[prop];
   readline.setPrompt(state.prompt);
