@@ -1,5 +1,6 @@
 import { Interface } from "readline";
 import { displayNumbers, getNewNumberMap } from "./helpers";
+import { startTimer, stopTimer } from "./timer";
 
 export type Store = Map<number, number>;
 export type GetGlobalProp = <T extends keyof State>(prop: T) => State[T];
@@ -13,14 +14,14 @@ export type Initial = TaggedState<"Initial"> & {
 export type Running = TaggedState<"Running"> & {
   store: Store;
   getGlobalProp: GetGlobalProp;
-  timeout: NodeJS.Timeout;
+  timerId: NodeJS.Timeout;
   interval: number;
   prompt: string;
 };
 export type Paused = TaggedState<"Paused"> & {
   store: Store;
   getGlobalProp: GetGlobalProp;
-  timeout: NodeJS.Timeout;
+  timerId: NodeJS.Timeout;
   interval: number;
   prompt: string;
 };
@@ -73,13 +74,13 @@ export type Reducer = (action: Action, state: State) => State;
 
 const reduceInitial = (action: Action, state: Initial): State => {
   if (isInputTimerInterval(action)) {
+    // TODO: get rid of all the console logs and only use readline
+    const timerId = startTimer(action.integer, () => console.log(displayNumbers(state.getGlobalProp("store"))));
     return <Running>{
       ...state,
       interval: action.integer,
       tag: "Running",
-      timeout: setInterval(() => {
-        console.log(displayNumbers(state.getGlobalProp("store")));
-      }, action.integer * 1000 || 3000),
+      timerId,
       prompt: "Please enter the first number",
     };
   }
@@ -95,11 +96,11 @@ const reduceRunning = (action: Action, state: Running): State => {
     };
   }
   if (isHalt(action)) {
-    clearInterval(state.timeout);
+    stopTimer(state.timerId);
     return <Paused>{ ...state, tag: "Paused", prompt: "Timer paused" };
   }
   if (isQuit(action)) {
-    clearInterval(state.timeout);
+    stopTimer(state.timerId);
     return <Terminated>{ ...state, tag: "Terminated", prompt: "Thanks for playing, press any key to exit." };
   }
   if (isInvalidInput(action)) {
@@ -110,12 +111,11 @@ const reduceRunning = (action: Action, state: Running): State => {
 
 const reducePaused = (action: Action, state: Paused): State => {
   if (isResume(action)) {
+    const timerId = startTimer(state.interval, () => console.log(displayNumbers(state.getGlobalProp("store"))));
     return <Running>{
       ...state,
       tag: "Running",
-      timeout: setInterval(() => {
-        console.log(displayNumbers(state.getGlobalProp("store")));
-      }, state.interval * 1000 || 3000),
+      timerId,
       prompt: "Timer resumed",
     };
   }
@@ -182,6 +182,5 @@ export const app = (readline: Interface) => {
     state = transition(action, state);
     readline.setPrompt(state.prompt);
     readline.prompt();
-    console.log("\n");
   });
 };
