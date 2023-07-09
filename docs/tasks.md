@@ -1,76 +1,18 @@
-# Timer Component
+- Roll back the timer and verify that it works.
+- Implement the Fibonacci functionality.
 
-Handles time management. Publishes a logEvent every time the tick occurs. Interval is hardcoded upon initialisation.
+- 1. You have a new requirement to implement for your application: its logic should stay
+     exactly the same but it will need to have a different user interface (e.g. if you wrote a
+     web app, a different UI may be a REPL).
+     Please describe how you would go about implementing this new UI in your application?
+     Would you need to restructure your solution in any way?
+- The app should be ported across to react pretty easily.
+- Describe in detail how i would wire up event listeners instead of readline listeners.
+- Readline out can just go to a div
 
-Will not be adding queue redundancy. Only one event at a time.
+3. What did you think about this coding test - is there anything you’d suggest in order to
+   improve it?
+   I got super nervous about what scope to include and ended up over engineering it. I guess a guideline of what quality to aim for would be good.
+   Alternatively a statement that says: "This is not intended to be a production level application. If you make any compromises, or have TODOs that you would implement if you had more time, document them in your answer."
 
-Pause method will require some thought. If the pause is supposed to start midway between two ticks. Then there may need to be another property to hold that 'short tick'. Consider edge cases and clearing out events when the timer pauses.
-
-### Methods:
-
-- Start
-- Pause
-- Stop
-- Clear
-
-### Properties
-
-- interval
-- currentTick
-- startTime
-- drift
-- fireCallback
-
-# InputHandler
-
-Handles user input supplied as a string.
-
-### Methods
-
-- handleInput
-- handleNumber
-- handleStateChange
-
-### Properties
-
-- Enum: PAUSE, RESUME, START
-
-# Store
-
-Simple component to keep the numbers array in a separate place. Without this, we would need the Timer to reach into the Input, or the Input to write to the timer.
-The Input will write the numbers to the number store.
-The Timer will read the numbers from the number store.
-
-### Methods
-
-- getNumbers
-- addNumber
-
-### Properties
-
-- numbers
-
-# FibCheck Component
-
-Has the fibonacci check logic. Is called by the Input for each number.
-
-### Methods
-
-- IsFibbonaci
-
-# Output
-
-Prints the output of the program. Will need to be called by InputHandler (fibonacci number, PAUSE, RESUME etc). Subscribes to Alert and Log events. Different event handlers for UI or CLI app.
-
-### Methods
-
-- handleAlert
-- handleLog
-
-# Input
-
-Wires up to the computer input. Only write the implementation for the CLI possibility. Should be pretty easy to wire up to a webapp as well. Has fireEvent method that will fire user input events that the InputHandler subscribes to.
-
-### Methods
-
-- fireEvent
+   I wasn't sure whether to focus on the timer accuracy, or the IO and state machine, or the BigInt specifics of the fibonacci calculator.

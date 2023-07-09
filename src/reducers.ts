@@ -8,9 +8,7 @@ export type Reducer = (action: Action, state: State) => State;
 const reduceInitial = (action: Action, state: Initial): State => {
   if (isInputTimerInterval(action)) {
     // TODO: get rid of all the console logs and only use readline
-    const timerId = startTimer(action.integer, Date.now(), () =>
-      console.log(displayNumbers(state.getGlobalProp("store")))
-    );
+    const timerId = startTimer(action.integer, () => console.log(displayNumbers(state.getGlobalProp("store"))));
     return <Running>{
       ...state,
       interval: action.integer,
@@ -36,7 +34,7 @@ const reduceRunning = (action: Action, state: Running): State => {
   }
   if (isQuit(action)) {
     stopTimer(state.timerId);
-    return <Terminated>{ ...state, tag: "Terminated", prompt: "Thanks for playing, press any key to exit." };
+    return <Terminated>{ ...state, tag: "Terminated", prompt: "Thanks for playing, press <RETURN> to exit." };
   }
   if (isInvalidInput(action)) {
     console.log(`invalid input: ${action.input}\n`);
@@ -46,9 +44,7 @@ const reduceRunning = (action: Action, state: Running): State => {
 
 const reducePaused = (action: Action, state: Paused): State => {
   if (isResume(action)) {
-    const timerId = startTimer(state.interval, state.startDate, () =>
-      console.log(displayNumbers(state.getGlobalProp("store")))
-    );
+    const timerId = startTimer(state.interval, () => console.log(displayNumbers(state.getGlobalProp("store"))));
     return <Running>{
       ...state,
       tag: "Running",
@@ -59,7 +55,8 @@ const reducePaused = (action: Action, state: Paused): State => {
   return state;
 };
 
-const reduceTerminated = (): State => {
+const reduceTerminated = (state: Terminated): State => {
+  stopTimer(state.timerId);
   process.exit();
 };
 
@@ -74,7 +71,7 @@ export const reduce: Reducer = (action: Action, state: State): State => {
     return reducePaused(action, state);
   }
   if (isTerminated(state)) {
-    return reduceTerminated();
+    return reduceTerminated(state);
   }
   return state;
 };

@@ -67,7 +67,7 @@ describe("app e2e test", () => {
     expect(setPromptSpy).toHaveBeenNthCalledWith(8, "Timer resumed");
 
     readline.emit("line", "quit");
-    expect(setPromptSpy).toHaveBeenNthCalledWith(9, "Thanks for playing, press any key to exit.");
+    expect(setPromptSpy).toHaveBeenNthCalledWith(9, "Thanks for playing, press <RETURN> to exit.");
 
     expect(startTimerSpy).toHaveBeenCalledTimes(2);
     expect(stopTimerSpy).toHaveBeenCalledTimes(2);

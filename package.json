@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "ts-node ./src/index.ts",
-    "demo": "ts-node ./demo/index.ts"
+    "app": "ts-node ./src/index.ts"
   },
   "keywords": [],
   "author": "",
