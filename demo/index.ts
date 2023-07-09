@@ -1,18 +1,25 @@
 import { createInterface } from "readline";
-import { getNewNumberMap } from "./helpers";
+import { displayNumbers, getNewNumberMap } from "./helpers";
 
 export type Store = Map<number, number>;
+export type GetGlobalProp = <T extends keyof State>(prop: T) => State[T];
 
 export type TaggedState<T extends string> = { tag: T };
-export type Initial = TaggedState<"Initial"> & { store: Store; prompt: string };
+export type Initial = TaggedState<"Initial"> & {
+  store: Store;
+  getGlobalProp: GetGlobalProp;
+  prompt: string;
+};
 export type Running = TaggedState<"Running"> & {
   store: Store;
+  getGlobalProp: GetGlobalProp;
   timeout: NodeJS.Timeout;
   interval: number;
   prompt: string;
 };
 export type Paused = TaggedState<"Paused"> & {
   store: Store;
+  getGlobalProp: GetGlobalProp;
   timeout: NodeJS.Timeout;
   interval: number;
   prompt: string;
@@ -70,8 +77,10 @@ const reduceInitial = (action: Action, state: Initial): State => {
       ...state,
       interval: action.integer,
       tag: "Running",
-      timeout: setTimeout(() => {}, action.integer || 3000),
-      prompt: `Please enter the ${state.store.size === 0 ? "first" : "next"} number`,
+      timeout: setInterval(() => {
+        console.log(displayNumbers(state.getGlobalProp("store")));
+      }, action.integer * 1000 || 3000),
+      prompt: "Please enter the first number",
     };
   }
   return <Initial>{ ...state, prompt: "Please enter a number between 1 and 10" };
@@ -82,29 +91,32 @@ const reduceRunning = (action: Action, state: Running): State => {
     return <Running>{
       ...state,
       store: getNewNumberMap(state.store, action.integer),
-      prompt: `Please enter the ${state.store.size === 0 ? "first" : "next"} number`,
+      prompt: "Please enter the next number",
     };
   }
   if (isHalt(action)) {
+    clearInterval(state.timeout);
     return <Paused>{ ...state, tag: "Paused", prompt: "Timer paused" };
   }
   if (isQuit(action)) {
-    return <Terminated>{ ...state, tag: "Terminated", prompt: "Goodbye" };
+    clearInterval(state.timeout);
+    return <Terminated>{ ...state, tag: "Terminated", prompt: "Thanks for playing, press any key to exit." };
   }
   if (isInvalidInput(action)) {
-    console.log(`invalid input: ${action.input}`);
+    console.log(`invalid input: ${action.input}\n`);
   }
   return state;
 };
 
 const reducePaused = (action: Action, state: Paused): State => {
   if (isResume(action)) {
-    console.log("timer resumed");
     return <Running>{
       ...state,
       tag: "Running",
-      timeout: setTimeout(() => {}, state.interval || 3000),
-      prompt: `Please enter the ${state.store.size === 0 ? "first" : "next"} number`,
+      timeout: setInterval(() => {
+        console.log(displayNumbers(state.getGlobalProp("store")));
+      }, state.interval * 1000 || 3000),
+      prompt: "Timer resumed",
     };
   }
   return state;
@@ -165,17 +177,17 @@ const main = () => {
     output: process.stdout,
   });
 
-  let state: State = { tag: "Initial", store: new Map(), prompt: "Enter a number between 1 and 10" };
+  let state: State = <Initial>{ tag: "Initial", store: new Map(), prompt: "Enter a number between 1 and 10" };
+  state.getGlobalProp = (prop) => state[prop];
   readline.setPrompt(state.prompt);
   readline.prompt();
 
   readline.on("line", (input) => {
     const action = handleIO(state, input);
     state = transition(action, state);
-    console.log(state.tag);
-    console.log(state.store);
     readline.setPrompt(state.prompt);
     readline.prompt();
+    console.log("\n");
   });
 };
 

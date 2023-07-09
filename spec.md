@@ -155,22 +155,33 @@ Lets go with option 1. We will deploy the websockets solution cause it seems lik
 
 ## How to deploy and manage in production?
 
-### Redesign
+### SPA solution
 
-To support multiple users, you need to make sure a new App is initalised from a new client session. A super simple solution: The client can generate a uuid and prefix each event. When each app is initialised, it is setup with event listeners that only respond to that particular uuid prefix. We would also want to create a new timer every time we get a new 'start' event.
+Assume that we are going with a static SPA. Any session management can just be in local storage.
+
+<!-- ### Redesign
+
+To support multiple users, you need to make sure a new App is initalised from a new client session. A super simple solution: The client can generate a uuid and prefix each event. When each app is initialised, it is setup with event listeners that only respond to that particular uuid prefix. We would also want to create a new timer every time we get a new 'start' event. -->
 
 ### Hosting
 
 Dev, stageing and Production environemnts.
-Put the whole project in a single repo. Host the frontend on S3 as a static page. Add a cloudfront configuration in front of it to make it reachable. Host the backend on ec2 or even ecs if you want to dockerise it. Configure a custom domain. spend hours fiddling around on aws making sure that everything can reach each other.
-I've not hosted a websockets app before. So I would have to research how that differs from an express app, if at all. It seems that it's probably better to use an application load balancer rather than API gateway. Which makes sense, cause you are sending messages rather than REST requests.
+Put the whole project in a single repo. Host the frontend on S3 as a static page. Add a cloudfront configuration in front of it to make it reachable.
+
+<!-- Host the backend on ec2 or even ecs if you want to dockerise it.  -->
+
+Configure a custom domain. spend hours fiddling around on aws making sure that everything can reach each other.
+
+<!-- I've not hosted a websockets app before. So I would have to research how that differs from an express app, if at all. It seems that it's probably better to use an application load balancer rather than API gateway. Which makes sense, cause you are sending messages rather than REST requests. -->
+
 Add a SSL Certificate and HTTPS.
 
 ### Deployment
 
 Use github actions to deploy to the dev environment every time we merge a PR to the main branch.
 Setup manual github actions to promote the build to staging and production.
-I'm not sure how you would update the backend without resetting all the users sessions. But I know it can be done, just outside the scope of this exercise. You might want to have an load balancer send all the new sessions to the new version of the backend. And then when the active sessions drop below a certain level, you kill the old backend? It really depends on how mission critical it is to support long running timers.
+
+<!-- I'm not sure how you would update the backend without resetting all the users sessions. But I know it can be done, just outside the scope of this exercise. You might want to have an load balancer send all the new sessions to the new version of the backend. And then when the active sessions drop below a certain level, you kill the old backend? It really depends on how mission critical it is to support long running timers. -->
 
 ### Testing
 
@@ -179,8 +190,16 @@ There should be a small amount of e2e (playwright or cypress) tests that run on 
 
 ### Monitoring
 
-I've not ever been in charge of setting up analytics. But something like PM2 with alerts for the backend node process would be useful. I would want to keep an eye on the amount of listeners on the process. And the memory usage cause event listener apps are prone to memory leakage problems.
-I might add something like sentry to the front end and back end events. And if the app crashes, I can look through the last user actionss and get ideas about why things went wrong.
+I've not ever been in charge of setting up analytics.
+
+<!-- But something like PM2 with alerts for the backend node process would be useful.  -->
+<!-- I would want to keep an eye on the amount of listeners on the process. And the memory usage cause event listener apps are prone to memory leakage problems. -->
+
+How to monitor crashes on the frontend? Sentry. Write a little bit about what events to listen for.
+
+Monitor the timer drift and report that to a particular senry report. If there are certain sessions that are always underperforming it would be good to get UA session details and find out about whether we need to support lower tier hardware.
+
+I might add something like sentry to the front end and back end events. And if the app crashes, I can look through the last user actions and get ideas about why things went wrong.
 
 3. What did you think about this coding test - is there anything you’d suggest in order to
    improve it?
