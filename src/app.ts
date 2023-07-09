@@ -171,7 +171,7 @@ const handleIO = (state: State, input: string): Action => {
   }
 };
 
-const main = () => {
+export const app = () => {
   const readline = createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -190,5 +190,3 @@ const main = () => {
     console.log("\n");
   });
 };
-
-main();
