@@ -14,16 +14,6 @@ export const getValidInteger = (input: string): false | number => {
   return Number.isInteger(num) && num !== 0 ? num : false;
 };
 
-// export const fibonacciMap = (n: number): Map<number, bigint> => {
-//   const fibs = [BigInt(0), BigInt(1)];
-
-//   for (let i = 2; i <= n; i++) {
-//     fibs[i] = fibs[i - 1] + fibs[i - 2];
-//   }
-
-//   return new Map(fibs.map((x, i) => [i, x]));
-// };
-
 export const fibonacciMap = (n: number): Map<string, number> => {
   let fibs = [BigInt(0), BigInt(1)];
 
