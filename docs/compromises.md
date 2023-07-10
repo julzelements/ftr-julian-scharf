@@ -51,12 +51,12 @@ resume (The timer restarts, disregarding any time left during the halt, and begi
 
 A traditional implementation of a timer may expect the remaining interval time to be preserved and resumed. To fix this, the timer would need a global state reference. I decided to leave this out in the interest of keeping the app simpler.
 
-### Testing
+## Testing
 
 e2e tests arent' perfect.
 CLI testing is hard.
 Needs more state change unit tests if it was production grade.
 
-### Accuracy
+## Accuracy
 
-The map stores the numbers as ints. If a user inputs an integer past the safe limit of javascript, it may get rounded and stored as a different int.
+The map stores the numbers as ints. If a user inputs an integer past the safe limit of javascript, it may get rounded and stored as a different int. It might be better to store the numbers as strings.

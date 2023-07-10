@@ -1,4 +1,4 @@
-import { displayNumbers, getValidInteger, getNewNumberMap, fibonacciMap } from "../utils";
+import { displayNumbers, getValidInteger, getNewNumberMap, getFibonacciMap } from "../utils";
 
 describe("displayNumbers", () => {
   it("correctly displays numbers", () => {
@@ -38,8 +38,7 @@ describe("getValidInteger", () => {
 
 describe("fibonacciMap", () => {
   it("returns the fibonacci sequence up to n", () => {
-    const fibMap = fibonacciMap(10);
-    console.log(fibMap);
+    const fibMap = getFibonacciMap(10);
     // technically i should remove this 0 => 0 but it's an invalid input anyway
     // strictly speaking the sequence starts with 1
     expect(fibMap.get("0")).toEqual("0");
@@ -59,7 +58,7 @@ describe("fibonacciMap", () => {
   it("correctly calculated the 1000th fibonacci number", () => {
     // check out http://www.fullbooks.com/The-first-1001-Fibonacci-Numbers.html
     // here: http://homepage.cs.uiowa.edu/~sriram/21/fall07/code/FastFibonacci.out#:~:text=The%201000th%20Fibonacci%20number%20is,4%20milliseconds%20to%20compute%20it.
-    const fibMap = fibonacciMap(1000);
+    const fibMap = getFibonacciMap(1000);
     expect(
       fibMap.get(
         "43466557686937456435688527675040625802564660517371780402481729089536555417949051890403879840079255169295922593080322634775209689623239873322471161642996440906533187938298969649928516003704476137795166849228875"

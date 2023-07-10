@@ -1,6 +1,3 @@
-- Roll back the timer and verify that it works.
-- Implement the Fibonacci functionality.
-
 - 1. You have a new requirement to implement for your application: its logic should stay
      exactly the same but it will need to have a different user interface (e.g. if you wrote a
      web app, a different UI may be a REPL).

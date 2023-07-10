@@ -24,7 +24,7 @@ export type Paused = TaggedState<"Paused"> & {
   interval: number;
   prompt: string;
 };
-export type Terminated = TaggedState<"Terminated"> & { store: Store; prompt: string; timerId: NodeJS.Timeout };
+export type Terminated = TaggedState<"Terminated"> & { store: Store; prompt: string };
 export type State = Initial | Running | Paused | Terminated;
 
 export const isInitial = (x: State): x is Initial => {

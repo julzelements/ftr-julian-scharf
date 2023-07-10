@@ -55,9 +55,8 @@ const reducePaused = (action: Action, state: Paused): State => {
   return state;
 };
 
-const reduceTerminated = (state: Terminated): State => {
-  stopTimer(state.timerId);
-  process.exit();
+const reduceTerminated = (): State => {
+  process.exit(0);
 };
 
 export const reduce: Reducer = (action: Action, state: State): State => {
@@ -71,7 +70,7 @@ export const reduce: Reducer = (action: Action, state: State): State => {
     return reducePaused(action, state);
   }
   if (isTerminated(state)) {
-    return reduceTerminated(state);
+    return reduceTerminated();
   }
   return state;
 };

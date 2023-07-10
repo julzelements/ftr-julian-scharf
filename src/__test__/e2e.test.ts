@@ -10,6 +10,7 @@ describe("app e2e test", () => {
   let promptSpy: jest.SpyInstance;
   let startTimerSpy: jest.SpyInstance;
   let stopTimerSpy: jest.SpyInstance;
+  let exitSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest.useFakeTimers();
@@ -22,6 +23,9 @@ describe("app e2e test", () => {
     promptSpy = readline.prompt as jest.Mock;
     startTimerSpy = jest.spyOn(timer, "startTimer");
     stopTimerSpy = jest.spyOn(timer, "stopTimer");
+    exitSpy = jest.spyOn(process, "exit").mockImplementation((code?: number): never => {
+      throw new Error(`process.exit(${code})`);
+    });
   });
 
   afterEach(() => {
@@ -42,32 +46,49 @@ describe("app e2e test", () => {
     readline.emit("line", "909");
     expect(setPromptSpy).toHaveBeenNthCalledWith(3, "Please enter the next number");
     jest.advanceTimersByTime(5000);
-    expect(consoleLogSpy).toHaveBeenCalledWith("909:1");
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(1, "909:1");
 
-    readline.emit("line", "808");
+    readline.emit("line", "8");
     expect(setPromptSpy).toHaveBeenNthCalledWith(4, "Please enter the next number");
     jest.advanceTimersByTime(5000);
-    expect(consoleLogSpy).toHaveBeenCalledWith("909:1, 808:1");
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(2, "FIB");
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(3, "909:1, 8:1");
 
     readline.emit("line", "909");
     expect(setPromptSpy).toHaveBeenNthCalledWith(5, "Please enter the next number");
     jest.advanceTimersByTime(5000);
-    expect(consoleLogSpy).toHaveBeenCalledWith("909:2, 808:1");
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(4, "909:2, 8:1");
+
+    readline.emit(
+      "line",
+      "43466557686937456435688527675040625802564660517371780402481729089536555417949051890403879840079255169295922593080322634775209689623239873322471161642996440906533187938298969649928516003704476137795166849228875"
+    );
+    expect(setPromptSpy).toHaveBeenNthCalledWith(5, "Please enter the next number");
+    jest.advanceTimersByTime(5000);
+    expect(consoleLogSpy).toHaveBeenNthCalledWith(5, "FIB");
+    expect(setPromptSpy).toHaveBeenNthCalledWith(6, "Please enter the next number");
 
     readline.emit("line", "banana");
     expect(consoleLogSpy).toHaveBeenCalledWith("invalid input: banana\n");
-    expect(setPromptSpy).toHaveBeenNthCalledWith(6, "Please enter the next number");
+    expect(setPromptSpy).toHaveBeenNthCalledWith(7, "Please enter the next number");
 
     readline.emit("line", "halt");
     expect(stopTimerSpy).toHaveBeenCalledTimes(1);
-    expect(setPromptSpy).toHaveBeenNthCalledWith(7, "Timer paused");
+    expect(setPromptSpy).toHaveBeenNthCalledWith(8, "Timer paused");
 
     readline.emit("line", "resume");
     expect(startTimerSpy).toHaveBeenCalledTimes(2);
-    expect(setPromptSpy).toHaveBeenNthCalledWith(8, "Timer resumed");
+    expect(setPromptSpy).toHaveBeenNthCalledWith(9, "Timer resumed");
 
     readline.emit("line", "quit");
-    expect(setPromptSpy).toHaveBeenNthCalledWith(9, "Thanks for playing, press <RETURN> to exit.");
+    expect(setPromptSpy).toHaveBeenNthCalledWith(10, "Thanks for playing, press <RETURN> to exit.");
+
+    try {
+      readline.emit("line", "");
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+      expect(error).toHaveProperty("message", "process.exit(0)");
+    }
 
     expect(startTimerSpy).toHaveBeenCalledTimes(2);
     expect(stopTimerSpy).toHaveBeenCalledTimes(2);
