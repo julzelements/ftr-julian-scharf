@@ -1,18 +1,21 @@
-import { GetGlobalProp, Store } from "./app";
+export type GetGlobalProp = <T extends keyof State>(prop: T) => State[T];
+export type Store = Map<number, number>;
+export type FibonacciMap = Map<string, number>;
 
 export type TaggedState<T extends string> = { tag: T };
 export type Initial = TaggedState<"Initial"> & {
   store: Store;
+  fibonacciMap: FibonacciMap;
   getGlobalProp: GetGlobalProp;
   prompt: string;
 };
 export type Running = TaggedState<"Running"> & {
   store: Store;
+  fibonacciMap: FibonacciMap;
   getGlobalProp: GetGlobalProp;
   timerId: NodeJS.Timeout;
   interval: number;
   prompt: string;
-  startDate: number;
 };
 export type Paused = TaggedState<"Paused"> & {
   store: Store;
@@ -20,7 +23,6 @@ export type Paused = TaggedState<"Paused"> & {
   timerId: NodeJS.Timeout;
   interval: number;
   prompt: string;
-  startDate: number;
 };
 export type Terminated = TaggedState<"Terminated"> & { store: Store; prompt: string; timerId: NodeJS.Timeout };
 export type State = Initial | Running | Paused | Terminated;

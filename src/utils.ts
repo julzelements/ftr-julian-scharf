@@ -14,7 +14,7 @@ export const getValidInteger = (input: string): false | number => {
   return Number.isInteger(num) && num !== 0 ? num : false;
 };
 
-export const fibonacciMap = (n: number): Map<string, number> => {
+export const getFibonacciMap = (n: number): Map<string, number> => {
   let fibs = [BigInt(0), BigInt(1)];
 
   for (let i = 2; i <= n; i++) {
