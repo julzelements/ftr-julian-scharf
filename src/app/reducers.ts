@@ -1,7 +1,7 @@
 import { Action, isHalt, isInputNumber, isInputTimerInterval, isInvalidInput, isQuit, isResume } from "./actions";
-import { displayNumbers, getNewNumberMap } from "./utils";
+import { displayNumbers, getNewNumberMap } from "../helpers/utils";
 import { Initial, Paused, Running, State, Terminated, isInitial, isPaused, isRunning, isTerminated } from "./states";
-import { startTimer, stopTimer } from "./timer";
+import { startTimer, stopTimer } from "../helpers/timer";
 
 export type Reducer = (action: Action, state: State) => State;
 

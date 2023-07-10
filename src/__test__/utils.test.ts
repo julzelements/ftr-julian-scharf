@@ -1,4 +1,4 @@
-import { displayNumbers, getValidInteger, getNewNumberMap, getFibonacciMap } from "../utils";
+import { displayNumbers, getValidInteger, getNewNumberMap, getFibonacciMap } from "../helpers/utils";
 
 describe("displayNumbers", () => {
   it("correctly displays numbers", () => {

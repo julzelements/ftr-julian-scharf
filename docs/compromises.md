@@ -6,7 +6,23 @@ The timer uses node's built in `setInterval`. This makes it easy to set a recurr
 You can see evidence of this by running the following code and observing the drift:
 
 ```
-PULL THE SNIPPET FROM GITHUB
+const now = Date.now();
+
+setInterval(() => {
+  console.log("setInterval", Date.now() - now);
+}, 1000);
+
+example output:
+setInterval 1002
+setInterval 2004
+setInterval 3006
+setInterval 4006
+setInterval 5007
+setInterval 6009
+setInterval 7010
+setInterval 8011
+
+Slowly creeps out of sync with the actual time.
 ```
 
 It could be fixed changing to `setTimout`, calculating the drift for each tick. It would also require passing a reference to the global state to the timer to keep track of each new `timerId` so that the timer can be paused and killed from the main run loop.
@@ -50,13 +66,3 @@ resume (The timer restarts, disregarding any time left during the halt, and begi
 ```
 
 A traditional implementation of a timer may expect the remaining interval time to be preserved and resumed. To fix this, the timer would need a global state reference. I decided to leave this out in the interest of keeping the app simpler.
-
-## Testing
-
-e2e tests arent' perfect.
-CLI testing is hard.
-Needs more state change unit tests if it was production grade.
-
-## Accuracy
-
-The map stores the numbers as ints. If a user inputs an integer past the safe limit of javascript, it may get rounded and stored as a different int. It might be better to store the numbers as strings.

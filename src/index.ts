@@ -1,4 +1,4 @@
-import { app } from "./app";
+import { app } from "./app/app";
 import { createInterface } from "readline";
 
 const readline = createInterface({

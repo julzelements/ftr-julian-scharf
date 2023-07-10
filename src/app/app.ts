@@ -2,7 +2,7 @@ import { Interface } from "readline";
 import { Action } from "./actions";
 import { reduce } from "./reducers";
 import { State, isInitial, isRunning, isPaused, Initial } from "./states";
-import { getFibonacciMap, getValidInteger } from "./utils";
+import { getFibonacciMap, getValidInteger } from "../helpers/utils";
 
 const handleCommand = (input: string): Action => {
   if (input === "halt") {

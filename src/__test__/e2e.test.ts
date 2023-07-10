@@ -1,7 +1,7 @@
 import { Interface } from "readline";
 import { EventEmitter } from "events";
-import { app } from "../app";
-import * as timer from "../timer";
+import { app } from "../app/app";
+import * as timer from "../helpers/timer";
 
 describe("app e2e test", () => {
   let readline: Interface & EventEmitter;
@@ -14,7 +14,7 @@ describe("app e2e test", () => {
 
   beforeEach(() => {
     jest.useFakeTimers();
-    consoleLogSpy = jest.spyOn(console, "log");
+    consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
     readline = Object.assign(new EventEmitter(), {
       setPrompt: jest.fn(),
       prompt: jest.fn(),
