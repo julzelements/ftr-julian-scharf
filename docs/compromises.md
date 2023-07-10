@@ -56,3 +56,7 @@ A traditional implementation of a timer may expect the remaining interval time t
 e2e tests arent' perfect.
 CLI testing is hard.
 Needs more state change unit tests if it was production grade.
+
+### Accuracy
+
+The map stores the numbers as ints. If a user inputs an integer past the safe limit of javascript, it may get rounded and stored as a different int.

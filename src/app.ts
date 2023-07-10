@@ -2,7 +2,7 @@ import { Interface } from "readline";
 import { Action } from "./actions";
 import { reduce } from "./reducers";
 import { State, isInitial, isRunning, isPaused, Initial } from "./states";
-import { getValidInteger } from "./utils";
+import { fibonacciMap, getValidInteger } from "./utils";
 
 export type Store = Map<number, number>;
 export type GetGlobalProp = <T extends keyof State>(prop: T) => State[T];
@@ -25,6 +25,10 @@ const handleIO = (state: State, input: string): Action => {
     // TODO: make sensible user validation for inital time interval
     return integer ? { tag: "InputTimerInterval", integer } : { tag: "InvalidInput", input };
   } else if (isRunning(state) || isPaused(state)) {
+    const isFibonaci = fibonacciMap(1000).has(input);
+    if (isFibonaci) {
+      console.log("FIB");
+    }
     return integer ? { tag: "InputNumber", integer } : handleCommand(input);
   } else {
     return { tag: "NoOp" };
